@@ -77,7 +77,7 @@ S3Upload.prototype.createCORSRequest = function(method, url, opts) {
 };
 
 S3Upload.prototype.executeOnSignedUrl = function(file, callback) {
-    console.log('Execute on signer url', file);
+    console.log('Execute on signed url', JSON.stringify(file));
     var fileName = this.scrubFilename(file.name);
     var queryString = '?objectName=' + this.s3path + fileName + '&contentType=' + encodeURIComponent(file.type);
     if (this.signingUrlQueryParams) {
