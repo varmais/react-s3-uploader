@@ -98,7 +98,7 @@ S3Upload.prototype.executeOnSignedUrl = function(file, callback) {
     }
     xhr.overrideMimeType && xhr.overrideMimeType('text/plain; charset=x-user-defined');
     xhr.onreadystatechange = function() {
-        console.log('XHR ready state change', xhr.status, xhr.responseText, xhr);
+        console.log('executeOnSignedUrl XHR ready state change', xhr.status, xhr.responseText, xhr.readyState, xhr);
         if (xhr.readyState === 4 && this.signingUrlSuccessResponses.indexOf(xhr.status) >= 0) {
             var result;
             try {
@@ -128,8 +128,11 @@ S3Upload.prototype.uploadToS3 = function(file, signResult) {
                 return this.onError('Upload error: ' + xhr.status, file);
             }
         }.bind(this);
+        xhr.onreadystatechange = function() {
+          console.log('uploadToS3 XHR ready state change', xhr.status, xhr.responseText, xhr.readyState, xhr);
+        };
         xhr.onerror = function() {
-            console.error(xhr.status, xhr);
+            console.error(xhr.status, xhr.readyState, xhr);
             return this.onError('XHR error', file);
         }.bind(this);
         xhr.upload.onprogress = function(e) {
