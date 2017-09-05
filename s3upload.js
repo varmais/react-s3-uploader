@@ -77,6 +77,7 @@ S3Upload.prototype.createCORSRequest = function(method, url, opts) {
 };
 
 S3Upload.prototype.executeOnSignedUrl = function(file, callback) {
+    console.log('Execute on signer url', file);
     var fileName = this.scrubFilename(file.name);
     var queryString = '?objectName=' + this.s3path + fileName + '&contentType=' + encodeURIComponent(file.type);
     if (this.signingUrlQueryParams) {
@@ -97,6 +98,7 @@ S3Upload.prototype.executeOnSignedUrl = function(file, callback) {
     }
     xhr.overrideMimeType && xhr.overrideMimeType('text/plain; charset=x-user-defined');
     xhr.onreadystatechange = function() {
+        console.log('XHR ready state change', xhr.status, xhr.responseText, xhr);
         if (xhr.readyState === 4 && this.signingUrlSuccessResponses.indexOf(xhr.status) >= 0) {
             var result;
             try {
@@ -127,7 +129,7 @@ S3Upload.prototype.uploadToS3 = function(file, signResult) {
             }
         }.bind(this);
         xhr.onerror = function() {
-            console.error(xhr)
+            console.error(xhr.status, xhr);
             return this.onError('XHR error', file);
         }.bind(this);
         xhr.upload.onprogress = function(e) {
@@ -168,6 +170,7 @@ S3Upload.prototype.uploadToS3 = function(file, signResult) {
     } else {
         xhr.setRequestHeader('x-amz-acl', 'public-read');
     }
+    console.log('Before PUT', xhr);
     this.httprequest = xhr;
     return xhr.send(file);
 };
